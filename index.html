@@ -1203,4 +1203,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 </script>
 </body>
+  <script>
+  // Catch Netlify Identity tokens and redirect to admin
+  if (window.location.hash.includes("token")) {
+    window.location.href = "/admin/" + window.location.hash;
+  }
+</script>
 </html>
