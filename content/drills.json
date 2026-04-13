@@ -1,0 +1,28 @@
+{
+  "posts": [
+    {
+      "id": 3,
+      "type": "pressing",
+      "title": "Pressing triggers — 3-zone drill",
+      "date": "5 Απρ 2026",
+      "body": "## Setup\n\n- Full pitch split into 3 zones\n- Full squad\n- Duration: 30 min\n\n## How it works\n\nTeam A builds from the back. Team B presses. Each zone has a specific rule:\n\n**Zone 1 (defensive third):** No pressure — let them build\n\n**Zone 2 (middle third):** Press on trigger (back pass or GK touch)\n\n**Zone 3 (attacking third):** Full press immediately on every touch\n\n## Key coaching points\n\n- Press in pairs — never alone\n- After pressing, recover shape quickly\n- Communication — call the press out loud\n\n## Progressions\n\n1. Walk through the zones first\n2. Add light resistance\n3. Full intensity — game realistic",
+      "videos": []
+    },
+    {
+      "id": 2,
+      "type": "shooting",
+      "title": "Finishing under pressure — 1v1 with keeper",
+      "date": "28 Μαρ 2026",
+      "body": "## Setup\n\n- Half-pitch\n- Full squad in pairs\n- Duration: 25 min\n\n## How it works\n\nPlayer A and Player B do a quick 1-2 combination on the edge of the box. After the combination, Player A receives the ball and finishes 1v1 with the keeper. Player B applies light pressure from behind.\n\n## Key coaching points\n\n- First touch should set up the shot — not take you away from goal\n- Decide early: near post or far post\n- Stay composed — don't rush the finish\n\n## Variations\n\n- Add a passive defender at the edge of the area\n- Vary the starting position (left side, right side, central)",
+      "videos": []
+    },
+    {
+      "id": 1,
+      "type": "ballctrl",
+      "title": "Rondo 4v2 — ball control & awareness",
+      "date": "20 Μαρ 2026",
+      "body": "## Setup\n\n- Small square (10x10m)\n- 6 players minimum, 12 maximum\n- Duration: 20 min\n\n## Rules\n\n4 players keep the ball, 2 players press in the middle.\n\n- One-touch passing only (or two-touch for beginners)\n- If the 2 win the ball, the player who lost it goes into the middle\n- Winner stays — keep track of who avoids going in\n\n## Key coaching points\n\n- Constant movement — don't stand still after passing\n- Open body shape to see all options before receiving\n- Quick decision-making — the ball should move faster than the defenders\n\n## Progressions\n\n1. Two-touch allowed\n2. One-touch only\n3. Add a neutral player who always plays with the team in possession (5v2)",
+      "videos": []
+    }
+  ]
+}
