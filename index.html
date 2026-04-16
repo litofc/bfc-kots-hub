@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Becazzes FC — Kots Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+/* ── TOKENS ── */
+:root {
+  --dp:#2F1839; --dp2:#3a2048; --dp3:#4a2860;
+  --pm:#6B3D85; --pl:#DAC7E1; --pp:#EDE4F2;
+  --sky:#77C3E1; --sky-d:#5aafcf; --sky-pale:#E2F4FB; --sky-mid:#B6E2F3;
+  --bg:#f2edf7; --white:#ffffff; --text:#2F1839; --muted:#7A6388;
+  --faint:#B09DC0; --border:rgba(47,24,57,0.09);
+  --r:12px; --r-sm:8px;
+  --shadow:0 2px 14px rgba(47,24,57,0.08);
+  --shadow-md:0 6px 30px rgba(47,24,57,0.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
+a{text-decoration:none;color:inherit;}
+img{display:block;}
+
+/* ── PASSWORD GATE ── */
+.pw-gate{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,var(--dp) 0%,var(--dp2) 55%,var(--dp3) 100%);display:flex;align-items:center;justify-content:center;padding:2rem;}
+.pw-gate.hidden{display:none;}
+.pw-box{width:100%;max-width:380px;text-align:center;}
+.pw-logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:2rem;}
+.pw-logo img{width:52px;height:52px;border-radius:50%;object-fit:cover;}
+.pw-logo-text{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.02em;}
+.pw-title{font-size:15px;color:rgba(218,199,225,.55);margin-bottom:2rem;line-height:1.5;}
+.pw-field{position:relative;margin-bottom:12px;}
+.pw-field input{width:100%;padding:14px 18px;background:rgba(255,255,255,.07);border:1.5px solid rgba(218,199,225,.15);border-radius:var(--r-sm);font-family:'Space Grotesk',sans-serif;font-size:15px;color:#fff;outline:none;transition:border-color .2s,background .2s;text-align:center;letter-spacing:.05em;}
+.pw-field input::placeholder{color:rgba(218,199,225,.3);letter-spacing:0;}
+.pw-field input:focus{border-color:var(--sky);background:rgba(255,255,255,.1);}
+.pw-field input.shake{animation:shake .4s ease;}
+.pw-field input.error{border-color:#ef9a9a;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.pw-btn{width:100%;padding:14px;background:var(--sky);color:var(--dp);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;border:none;border-radius:var(--r-sm);cursor:pointer;transition:background .18s,transform .1s;letter-spacing:.02em;}
+.pw-btn:hover{background:var(--sky-d);}
+.pw-btn:active{transform:scale(.98);}
+.pw-error{font-size:13px;color:#ef9a9a;margin-top:10px;min-height:18px;transition:opacity .2s;}
+.pw-error.hidden{opacity:0;}
+.pw-fade-out{animation:pwFadeOut .5s ease forwards;}
+@keyframes pwFadeOut{0%{opacity:1}100%{opacity:0;pointer-events:none}}
+
+/* ── TICKER ── */
+.ticker{background:var(--sky);overflow:hidden;height:36px;display:flex;align-items:center;position:sticky;top:0;z-index:201;contain:layout paint style;}
+.ticker-track{display:flex;align-items:center;white-space:nowrap;will-change:transform;-webkit-animation:ticker 40s linear infinite;animation:ticker 40s linear infinite;}
+@-webkit-keyframes ticker{0%{-webkit-transform:translateX(0);transform:translateX(0)}100%{-webkit-transform:translateX(-50%);transform:translateX(-50%)}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-item{font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--dp);padding:0 36px;display:flex;align-items:center;gap:10px;}
+.ticker-item::after{content:'⚡';font-size:11px;opacity:.55;}
+.ticker-label{font-weight:700;letter-spacing:.09em;text-transform:uppercase;font-size:10px;opacity:.6;}
+
+/* ── NAV ── */
+nav{background:var(--dp);height:62px;display:flex;align-items:center;padding:0 2.5rem;position:sticky;top:36px;z-index:200;border-bottom:1px solid rgba(218,199,225,.08);}
+.nav-inner{max-width:1180px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:10px;}
+.nav-logo img{width:34px;height:34px;border-radius:50%;object-fit:cover;}
+.nav-logo-text{font-size:17px;font-weight:700;letter-spacing:-.02em;color:#fff;}
+.nav-links{display:flex;align-items:center;}
+.nav-links a{font-size:14px;font-weight:500;color:rgba(218,199,225,.6);padding:0 16px;height:62px;display:flex;align-items:center;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
+.nav-links a:hover{color:var(--pl);}
+.nav-links a.active{color:#fff;border-bottom-color:var(--sky);}
+/* nav-admin hidden — admins access /admin/ directly */
+/* hamburger */
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;border:none;background:none;margin-left:auto;}
+.nav-hamburger span{display:block;width:22px;height:2px;background:rgba(218,199,225,.7);border-radius:2px;transition:all .22s;}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-hamburger.open span:nth-child(2){opacity:0;}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+/* mobile nav drawer */
+.nav-drawer{display:none;position:fixed;top:98px;left:0;right:0;background:var(--dp);z-index:199;padding:8px 0 16px;border-bottom:1px solid rgba(218,199,225,.12);box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.nav-drawer.open{display:block;}
+.nav-drawer a{display:block;padding:13px 24px;font-size:15px;font-weight:500;color:rgba(218,199,225,.7);border-left:3px solid transparent;transition:all .15s;}
+.nav-drawer a:hover,.nav-drawer a.active{color:#fff;border-left-color:var(--sky);background:rgba(255,255,255,.04);}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(160deg,var(--dp) 0%,var(--dp2) 55%,var(--dp3) 100%);padding:5rem 2.5rem;position:relative;overflow:hidden;}
+.hero::after{content:'';position:absolute;right:-80px;top:-80px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(119,195,225,.07) 0%,transparent 65%);pointer-events:none;}
+.hero-inner{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 310px;gap:3rem;align-items:center;position:relative;z-index:1;}
+.hero-chip{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:5px 14px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(218,199,225,.75);margin-bottom:20px;}
+.hero-chip::before{content:'⚽';font-size:11px;}
+.hero h1{font-size:4rem;font-weight:700;line-height:1.05;letter-spacing:-.03em;margin-bottom:6px;color:#fff;}
+.hero h1 .sky{color:var(--sky);}
+.hero-sub{font-size:16px;font-weight:400;line-height:1.7;color:rgba(218,199,225,.6);margin-bottom:34px;max-width:400px;}
+.hero-btns{display:flex;gap:10px;}
+.btn{display:inline-flex;align-items:center;gap:7px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;padding:11px 22px;border-radius:var(--r-sm);border:none;cursor:pointer;transition:all .18s;letter-spacing:.01em;}
+.btn-sky{background:var(--sky);color:var(--dp);}
+.btn-sky:hover{background:var(--sky-d);box-shadow:0 4px 18px rgba(119,195,225,.3);}
+.btn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.25);}
+.btn-outline:hover{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);}
+
+/* ── COUNTDOWN BOX ── */
+.hero-countdown{display:flex;flex-direction:column;justify-content:center;padding:1.5rem 1.6rem;background:rgba(255,255,255,.05);border:1px solid rgba(218,199,225,.12);border-radius:var(--r);backdrop-filter:blur(4px);}
+.hero-match-title{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.02em;margin-bottom:5px;line-height:1.3;}
+.hero-match-detail{font-size:13px;color:rgba(218,199,225,.55);margin-bottom:14px;}
+.countdown{display:flex;align-items:center;gap:5px;flex-wrap:nowrap;}
+.cd-block{text-align:center;background:rgba(255,255,255,.07);border:1px solid rgba(218,199,225,.12);border-radius:var(--r-sm);padding:10px 0;flex:1;min-width:0;}
+.cd-n{font-size:22px;font-weight:700;color:#fff;line-height:1;letter-spacing:-.02em;}
+.cd-l{font-size:8px;font-weight:600;color:rgba(218,199,225,.4);text-transform:uppercase;letter-spacing:.08em;margin-top:3px;}
+.cd-sep{font-size:16px;color:rgba(218,199,225,.25);flex-shrink:0;}
+.cd-ended{font-size:15px;font-weight:700;color:var(--sky);text-align:center;}
+/* countdown eyebrow */
+.nm-eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sky);margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.nm-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--sky);flex-shrink:0;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+
+/* ── STATS ── */
+.stats-strip{background:var(--dp2);border-top:1px solid rgba(218,199,225,.07);border-bottom:1px solid rgba(218,199,225,.07);}
+.stats-inner{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);}
+.stat{padding:22px 0;text-align:center;border-right:1px solid rgba(218,199,225,.1);}
+.stat:last-child{border-right:none;}
+.stat-n{font-size:26px;font-weight:700;color:var(--pl);letter-spacing:-.02em;line-height:1;}
+.stat-l{font-size:10px;font-weight:600;color:rgba(218,199,225,.35);text-transform:uppercase;letter-spacing:.1em;margin-top:5px;}
+
+/* ── PAGE ROUTING ── */
+.page{display:none;}
+.page.active{display:block;}
+.page-body{background:var(--bg);padding-bottom:3rem;}
+/* Universal overflow containment */
+body{overflow-x:hidden;position:relative;}
+.page.active{overflow-x:hidden;max-width:100%;}
+/* Safety net for common overflow culprits */
+img,video,iframe,svg,canvas,table{max-width:100%!important;}
+pre{overflow-x:auto;white-space:pre-wrap;}
+
+/* ── HOME LAYOUT ── */
+.home-main{max-width:1180px;margin:0 auto;padding:2.5rem 2.5rem 0;}
+.home-top-row{display:grid;grid-template-columns:1fr 400px;gap:24px;align-items:start;margin-bottom:2.5rem;}
+.home-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:3rem;}
+
+/* ── SECTION LABELS ── */
+.sec-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:16px;display:flex;align-items:center;gap:10px;min-width:0;}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border);min-width:8px;}
+.sec-label-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:8px;}
+.sec-label-row .sec-label{margin-bottom:0;flex:1;min-width:0;}
+.see-all{font-size:13px;font-weight:600;color:var(--sky);cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.see-all:hover{color:var(--pm);}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem 1.6rem;box-shadow:var(--shadow);}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
+.card-title{font-size:17px;font-weight:700;letter-spacing:-.02em;color:var(--dp);}
+.card-link{font-size:13px;font-weight:600;color:var(--sky);transition:color .15s;}
+.card-link:hover{color:var(--pm);}
+
+/* ── OMADA PREVIEW CARDS ── */
+.omada-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.omada-card{background:var(--dp2);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:transform .18s,box-shadow .18s;}
+.omada-card:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(47,24,57,.25);}
+.omada-thumb{height:140px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.omada-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.omada-thumb-icon{position:relative;z-index:1;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.omada-body{padding:12px 14px;}
+.omada-card-title{font-size:13px;font-weight:700;color:#fff;line-height:1.4;margin:6px 0 5px;}
+.omada-card-meta{font-size:11px;color:rgba(218,199,225,.4);}
+.omada-card-tags{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;}
+.media-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;background:rgba(255,255,255,.08);color:rgba(218,199,225,.6);}
+
+/* ── MINI ITEMS ── */
+.mini-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.mini-item:first-child{padding-top:0;}
+.mini-item:last-child{border-bottom:none;padding-bottom:0;}
+.mini-thumb{width:40px;height:40px;border-radius:8px;flex-shrink:0;background:var(--dp2);display:flex;align-items:center;justify-content:center;font-size:16px;overflow:hidden;}
+.mini-thumb img{width:100%;height:100%;object-fit:cover;}
+.mini-info{flex:1;min-width:0;}
+.mini-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mini-sub{font-size:11px;color:var(--faint);margin-top:2px;}
+.mini-tag{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0;}
+.tag-sky{background:var(--sky-pale);color:#1b6e97;}
+.tag-green{background:#e4f5e6;color:#276b2e;}
+.tag-purple{background:var(--pp);color:var(--pm);}
+.tag-orange{background:#fef3e0;color:#8A5800;}
+
+/* ── STANDINGS CARD ── */
+.standings-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;}
+.standings-card-head{background:var(--dp);padding:14px 18px;display:flex;align-items:center;gap:10px;}
+.standings-card-head-title{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.02em;}
+/* ── STANDINGS TABLE ── */
+.standings-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;}
+.standings-table thead{background:var(--white);}
+.standings-table th{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding:10px 4px 8px;text-align:center;overflow:hidden;}
+.standings-table th:nth-child(2){text-align:left;padding-left:10px;width:38%;}
+.standings-table td{padding:8px 4px;text-align:center;color:var(--text);border-top:1px solid var(--border);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.standings-table td:nth-child(2){text-align:left;padding-left:10px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;}
+.standings-table .my-team{background:#f0eaf7;}
+.standings-table .my-team td{color:var(--dp);font-weight:700;}
+.standings-table .my-team td:nth-child(2){color:var(--dp);}
+.s-pos{font-size:11px;color:var(--faint)!important;font-weight:400!important;}
+.s-pts{font-weight:700!important;color:var(--dp)!important;}
+.s-gd-pos{color:#276b2e!important;font-weight:600!important;}
+.s-gd-neg{color:#b71c1c!important;font-weight:600!important;}
+
+/* ── POST CARDS (full page) ── */
+.inner-page{max-width:860px;margin:0 auto;padding:2.5rem;overflow-x:hidden;width:100%;box-sizing:border-box;}
+.inner-page-header{margin-bottom:2rem;}
+.inner-page-title{font-size:28px;font-weight:700;color:var(--dp);letter-spacing:-.02em;margin-bottom:6px;}
+.inner-page-sub{font-size:15px;color:var(--muted);}
+.no-posts{padding:2rem;text-align:center;color:var(--faint);font-size:14px;}
+
+/* post card */
+.post-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden;min-width:0;max-width:100%;}
+.post-card-head{padding:1.3rem 1.6rem 0;}
+.post-meta{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px;color:var(--faint);}
+.post-title{font-size:18px;font-weight:700;color:var(--dp);letter-spacing:-.02em;line-height:1.3;margin-bottom:12px;}
+
+/* preview (collapsed) */
+.post-preview{padding:0 1.6rem;position:relative;max-height:130px;overflow:hidden;transition:max-height .0s;}
+.post-preview::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,var(--white));pointer-events:none;}
+.post-card.expanded .post-preview{display:none;}
+
+/* full content (expanded) */
+.post-full{padding:0 1.6rem;display:none;}
+.post-card.expanded .post-full{display:block;}
+
+/* expand/collapse button */
+.post-expand-btn{display:flex;align-items:center;gap:6px;padding:12px 1.6rem 1.3rem;font-size:13px;font-weight:600;color:var(--sky);cursor:pointer;border:none;background:none;font-family:'Space Grotesk',sans-serif;transition:color .15s;}
+.post-expand-btn:hover{color:var(--pm);}
+.post-expand-btn svg{transition:transform .25s;}
+.post-card.expanded .post-expand-btn svg{transform:rotate(180deg);}
+
+/* markdown body styles */
+.md-body{font-size:15px;line-height:1.75;color:var(--text);overflow-wrap:break-word;word-break:break-word;min-width:0;}
+.md-body pre{overflow-x:auto;max-width:100%;}
+.md-body table{max-width:100%;overflow-x:auto;display:block;}
+.md-body h2{font-size:17px;font-weight:700;color:var(--dp);margin:1.4rem 0 .6rem;letter-spacing:-.02em;}
+.md-body h3{font-size:15px;font-weight:700;color:var(--dp);margin:1.1rem 0 .4rem;}
+.md-body h4{font-size:14px;font-weight:700;color:var(--pm);margin:.9rem 0 .3rem;text-transform:uppercase;letter-spacing:.04em;}
+.md-body p{margin-bottom:.9rem;}
+.md-body p:last-child{margin-bottom:0;}
+.md-body strong{font-weight:700;color:var(--dp);}
+.md-body em{font-style:italic;}
+.md-body ul,.md-body ol{padding-left:1.5rem;margin-bottom:.9rem;}
+.md-body li{margin-bottom:.3rem;}
+.md-body ol{list-style:decimal;}
+.md-body ul{list-style:disc;}
+.md-body img{width:100%;border-radius:var(--r-sm);margin:1rem 0;max-height:480px;object-fit:contain;display:block;background:var(--dp3);}
+.md-body svg{max-width:100%;height:auto;display:block;margin:1rem 0;}
+.md-body hr{border:none;border-top:1px solid var(--border);margin:1.2rem 0;}
+.md-body blockquote{border-left:3px solid var(--sky);padding:.5rem 1rem;background:var(--sky-pale);border-radius:0 var(--r-sm) var(--r-sm) 0;margin:.9rem 0;color:var(--muted);font-style:italic;}
+.md-body code{background:var(--pp);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:13px;}
+
+/* video embeds section */
+.post-videos{padding:0 1.6rem 1.4rem;display:flex;flex-direction:column;gap:16px;}
+.post-videos:empty{display:none;}
+.video-embed-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:var(--r-sm);background:var(--dp);}
+.video-embed-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:var(--r-sm);}
+.video-link-fallback{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--sky-pale);border:1px solid var(--sky-mid);border-radius:var(--r-sm);font-size:14px;font-weight:600;color:#1b6e97;}
+.video-link-fallback:hover{background:var(--sky-mid);}
+.video-link-fallback span{font-size:20px;}
+
+/* ── TYPE CHIPS ── */
+.post-type-chip{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:30px;}
+.chip-prematch{background:rgba(119,195,225,.18);color:var(--sky);}
+.chip-postmatch{background:rgba(76,175,80,.18);color:#81c784;}
+.chip-trainplan{background:rgba(218,199,225,.12);color:rgba(218,199,225,.7);}
+.chip-attack{background:rgba(119,195,225,.18);color:var(--sky);}
+.chip-defense{background:rgba(76,175,80,.18);color:#81c784;}
+.chip-setpiece{background:rgba(218,199,225,.12);color:rgba(218,199,225,.7);}
+.chip-ballctrl{background:rgba(255,167,38,.15);color:#ffb74d;}
+.chip-shooting{background:rgba(244,67,54,.15);color:#ef9a9a;}
+.chip-pressing{background:rgba(119,195,225,.18);color:var(--sky);}
+.chip-passing{background:rgba(156,39,176,.18);color:#ce93d8;}
+.chip-fitness{background:rgba(76,175,80,.18);color:#81c784;}
+.chip-other{background:rgba(218,199,225,.12);color:rgba(218,199,225,.5);}
+
+/* ── VISUAL CALENDAR ── */
+.cal-page-wrap{max-width:1100px;margin:0 auto;padding:2.5rem 2.5rem 3rem;}
+.cal-header{margin-bottom:2rem;}
+.cal-header-title{font-size:28px;font-weight:700;color:var(--dp);letter-spacing:-.02em;margin-bottom:6px;}
+.cal-header-sub{font-size:15px;color:var(--muted);}
+.month-tabs{display:flex;gap:8px;margin-bottom:24px;}
+.month-tab{padding:9px 22px;border-radius:var(--r-sm);font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--muted);transition:all .18s;}
+.month-tab.active{background:var(--dp);color:#fff;border-color:var(--dp);}
+.month-tab:hover:not(.active){border-color:var(--pm);color:var(--pm);}
+.cal-grid-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;}
+.cal-dow-row{display:grid;grid-template-columns:repeat(7,1fr);background:var(--dp);}
+.cal-dow{padding:10px 0;text-align:center;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(218,199,225,.5);}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-cell{min-height:90px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;cursor:default;transition:background .15s;position:relative;}
+.cal-cell:nth-child(7n){border-right:none;}
+.cal-cell.empty{background:rgba(242,237,247,.4);}
+.cal-cell.has-game{cursor:pointer;background:#f0faf5;}
+.cal-cell.has-game:hover{background:#d4f0e0;}
+.cal-cell.has-training{background:var(--sky-pale);}
+.cal-cell.has-both{background:linear-gradient(135deg,#f0faf5 50%,var(--sky-pale) 50%);}
+.cal-cell.is-today{outline:2px solid var(--sky);outline-offset:-2px;}
+.cal-day-num{font-size:13px;font-weight:700;color:var(--dp);margin-bottom:4px;}
+.cal-cell.empty .cal-day-num{color:var(--faint);}
+.cal-event{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;margin-bottom:3px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cal-event.ev-game{background:#c8edd8;color:#1a5e36;}
+.cal-event.ev-game-next{background:var(--sky);color:var(--dp);}
+.cal-event.ev-training{background:var(--sky-mid);color:#1b5e80;}
+.cal-event.ev-bye{background:#f3e8ff;color:#6a1b9a;font-weight:500;}
+.cal-more-games{font-size:9px;color:var(--muted);margin-top:2px;cursor:pointer;}
+
+/* ── DAY DETAIL MODAL ── */
+.day-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem;}
+.day-modal-overlay.open{display:flex;}
+.day-modal{background:var(--white);border-radius:var(--r);box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;}
+.day-modal-head{background:var(--dp);padding:1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.day-modal-title{color:#fff;font-size:18px;font-weight:700;letter-spacing:-.02em;}
+.day-modal-close{background:none;border:none;color:rgba(218,199,225,.5);font-size:24px;cursor:pointer;line-height:1;padding:0;transition:color .15s;}
+.day-modal-close:hover{color:#fff;}
+.day-modal-body{padding:1.5rem;}
+.dm-round-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.dm-round-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.dm-match-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.dm-match-row:last-child{border-bottom:none;padding-bottom:0;}
+.dm-match-row.bec-match{background:linear-gradient(90deg,rgba(119,195,225,.06),transparent);border-left:3px solid var(--sky);padding-left:10px;margin-left:-10px;border-radius:0 var(--r-sm) var(--r-sm) 0;}
+.dm-num{width:20px;height:20px;background:var(--bg);border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--faint);flex-shrink:0;}
+.dm-teams{flex:1;font-size:14px;font-weight:600;color:var(--dp);}
+.dm-time{font-size:13px;color:var(--faint);font-variant-numeric:tabular-nums;}
+.dm-training-row{display:flex;align-items:center;gap:12px;padding:12px;background:var(--sky-pale);border-radius:var(--r-sm);margin-top:8px;}
+.dm-training-icon{font-size:20px;}
+.dm-training-text{font-size:14px;font-weight:600;color:#1b5e80;}
+.dm-training-sub{font-size:12px;color:var(--muted);}
+.dm-bye{font-size:12px;color:var(--faint);font-style:italic;margin-top:8px;}
+
+/* ── FOOTER ── */
+footer{background:var(--dp);padding:2.5rem;text-align:center;margin-top:3rem;}
+.ft-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;}
+.ft-logo img{width:30px;height:30px;border-radius:50%;}
+.ft-logo span{font-size:15px;font-weight:700;color:var(--pl);}
+footer p{font-size:13px;color:rgba(218,199,225,.28);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1000px){
+  .hero-inner{grid-template-columns:1fr;}
+  .hero-countdown{margin-top:2rem;}
+  .stats-inner{grid-template-columns:repeat(2,1fr);}
+  .home-top-row{grid-template-columns:1fr;}
+  .home-bottom-row{grid-template-columns:1fr;}
+  .omada-grid{grid-template-columns:1fr 1fr;}
+  /* replace desktop nav links with hamburger */
+  .nav-links{display:none;}
+  .nav-hamburger{display:flex;}
+  /* standings table: horizontal scroll on tablet */
+  .standings-card{overflow-x:auto;}
+  .standings-table{min-width:460px;}
+}
+@media(max-width:700px){
+  .hero{padding:3rem 1.25rem;}
+  .hero h1{font-size:2.4rem;}
+  .hero-sub{font-size:14px;margin-bottom:22px;}
+  .hero-btns{flex-wrap:wrap;}
+  .home-main{padding:1.5rem 1rem 0;}
+  .inner-page{padding:1.5rem 1rem;}
+  .cal-page-wrap{padding:1.5rem 1rem 3rem;}
+  .omada-grid{grid-template-columns:1fr;}
+  /* standings compact on phone */
+  .standings-table{font-size:11px;min-width:380px;}
+  .standings-table th,.standings-table td{padding:7px 3px;}
+  .standings-table th:nth-child(2),.standings-table td:nth-child(2){padding-left:8px;}
+  /* hide GD column on very small screens */
+  .standings-table th:nth-child(6),.standings-table td:nth-child(6){display:none;}
+  /* stats strip 2x2 */
+  .stats-inner{grid-template-columns:repeat(2,1fr);}
+  .stat{padding:16px 0;}
+  .stat-n{font-size:22px;}
+  /* calendar */
+  .cal-cell{min-height:55px;padding:5px;}
+  .cal-event{display:none;}
+  .cal-cell.has-game::after,.cal-cell.has-training::after{content:'';display:block;width:6px;height:6px;border-radius:50%;margin:2px auto 0;}
+  .cal-cell.has-game::after{background:#4caf50;}
+  .cal-cell.has-training::after{background:var(--sky);}
+  .cal-day-num{font-size:11px;}
+  /* post cards */
+  .post-card-head{padding:1rem 1.1rem 0;}
+  .post-preview,.post-full{padding:0 1.1rem;}
+  .post-expand-btn{padding:10px 1.1rem 1rem;}
+  .post-videos{padding:0 1.1rem 1rem;}
+  /* month tabs */
+  .month-tab{padding:8px 14px;font-size:13px;}
+  /* shrink "See all" so it fits next to section label on small screens */
+  .see-all{font-size:11px;}
+  .sec-label-row{gap:6px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── PASSWORD GATE ── -->
+<div class="pw-gate" id="pw-gate">
+  <div class="pw-box">
+    <div class="pw-logo">
+      <img src="" alt="Becazzes FC">
+      <span class="pw-logo-text">Kots Hub</span>
+    </div>
+    <div class="pw-title">Internal coach hub · Becazzes FC<br>Enter your password to continue</div>
+    <div class="pw-field">
+      <input type="password" id="pw-input" placeholder="Password"
+        onkeydown="if(event.key==='Enter')checkPassword()">
+    </div>
+    <button class="pw-btn" onclick="checkPassword()">Enter →</button>
+    <div class="pw-error hidden" id="pw-error">Wrong password — try again</div>
+  </div>
+</div>
+
+<!-- ── TICKER ── -->
+<div class="ticker" id="ticker-bar">
+  <div class="ticker-track" id="ticker-track">
+  </div>
+</div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo" onclick="showPage('home');return false;">
+      <img src="" alt="Becazzes FC">
+      <span class="nav-logo-text">Kots Hub</span>
+    </a>
+    <div class="nav-links">
+      <a href="#" data-page="home"     onclick="showPage('home');return false;"     class="active">Home</a>
+      <a href="#" data-page="omada"    onclick="showPage('omada');return false;"           >Omada</a>
+      <a href="#" data-page="tactics"  onclick="showPage('tactics');return false;"         >Tactics</a>
+      <a href="#" data-page="drills"   onclick="showPage('drills');return false;"          >Training Drills</a>
+      <a href="#" data-page="calendar" onclick="showPage('calendar');return false;"        >Calendar</a>
+    </div>
+    <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<!-- mobile nav drawer -->
+<div class="nav-drawer" id="nav-drawer">
+  <a href="#" data-page="home"     onclick="showPage('home');closeMobileNav();return false;"     class="active">🏠 Home</a>
+  <a href="#" data-page="omada"    onclick="showPage('omada');closeMobileNav();return false;"           >👥 Omada</a>
+  <a href="#" data-page="tactics"  onclick="showPage('tactics');closeMobileNav();return false;"         >📋 Tactics</a>
+  <a href="#" data-page="drills"   onclick="showPage('drills');closeMobileNav();return false;"          >⚽ Training Drills</a>
+  <a href="#" data-page="calendar" onclick="showPage('calendar');closeMobileNav();return false;"        >📅 Calendar</a>
+</div>
+
+<!-- ══════════════════════════════ HOME PAGE ══════════════════════════════ -->
+<div id="page-home" class="page active">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-chip">UFA League · Season 2025/26</div>
+      <h1>Becazzes <span class="sky">FC</span></h1>
+      <p class="hero-sub">Internal coach hub — tactics, training & team management for the coaching staff.</p>
+      <div class="hero-btns">
+        <button class="btn btn-sky" onclick="showPage('omada')">📋 Omada</button>
+        <button class="btn btn-outline" onclick="showPage('calendar')">📅 Calendar</button>
+      </div>
+    </div>
+    <div>
+      <div class="hero-countdown">
+        <div class="nm-eyebrow" id="cd-eyebrow">● Next Match</div>
+        <div class="hero-match-title" id="cd-matchup">Loading…</div>
+        <div class="hero-match-detail" id="cd-detail"></div>
+        <div class="countdown" id="cd-wrap">
+          <div class="cd-block"><div class="cd-n" id="cd-d">--</div><div class="cd-l">Days</div></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-block"><div class="cd-n" id="cd-h">--</div><div class="cd-l">Hours</div></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-block"><div class="cd-n" id="cd-m">--</div><div class="cd-l">Min</div></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-block"><div class="cd-n" id="cd-s">--</div><div class="cd-l">Sec</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat"><div class="stat-n" id="st-played">—</div><div class="stat-l">Played</div></div>
+    <div class="stat"><div class="stat-n" id="st-record">—</div><div class="stat-l">Record</div></div>
+    <div class="stat"><div class="stat-n" id="st-gf">—</div><div class="stat-l">Goals Scored</div></div>
+    <div class="stat"><div class="stat-n" id="st-ga">—</div><div class="stat-l">Goals Conceded</div></div>
+  </div>
+</div>
+
+<!-- HOME CONTENT -->
+<div class="home-main">
+
+  <!-- Top row: Omada + Standings -->
+  <div class="home-top-row">
+    <!-- Omada preview -->
+    <div>
+      <div class="sec-label-row">
+        <div class="sec-label">Omada</div>
+        <span class="see-all" onclick="showPage('omada')">See all →</span>
+      </div>
+      <div class="omada-grid" id="home-omada-grid"></div>
+    </div>
+
+    <!-- Standings -->
+    <div>
+      <div class="standings-card">
+        <div class="standings-card-head">
+          <span style="font-size:18px;">🏆</span>
+          <span class="standings-card-head-title">UFA Standings</span>
+        </div>
+        <table class="standings-table">
+          <thead><tr>
+            <th>#</th><th>Team</th><th>GP</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
+          </tr></thead>
+          <tbody id="standings-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom row: Tactics + Drills -->
+  <div class="home-bottom-row">
+    <div>
+      <div class="sec-label-row">
+        <div class="sec-label">Tactics</div>
+        <span class="see-all" onclick="showPage('tactics')">See all →</span>
+      </div>
+      <div class="card"><div id="home-tactics-mini"></div></div>
+    </div>
+    <div>
+      <div class="sec-label-row">
+        <div class="sec-label">Training Drills</div>
+        <span class="see-all" onclick="showPage('drills')">See all →</span>
+      </div>
+      <div class="card"><div id="home-drills-mini"></div></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="ft-logo"><img src="" alt=""><span>Becazzes FC</span></div>
+  <p>Kots Hub · UFA Season 2025/26 · Internal use only</p>
+</footer>
+</div>
+<!-- END HOME -->
+
+<!-- ══════════════════════════════ OMADA PAGE ══════════════════════════════ -->
+<div id="page-omada" class="page">
+<div class="inner-page">
+  <div class="inner-page-header">
+    <div class="inner-page-title">👥 Omada</div>
+    <div class="inner-page-sub">Team updates, pre-match briefings & post-match reviews · by Kots</div>
+  </div>
+  <div id="omada-posts"></div>
+</div>
+</div>
+
+<!-- ══════════════════════════════ TACTICS PAGE ══════════════════════════════ -->
+<div id="page-tactics" class="page">
+<div class="inner-page">
+  <div class="inner-page-header">
+    <div class="inner-page-title">📋 Tactics</div>
+    <div class="inner-page-sub">Tactical analysis, formations & game plans · by Kots</div>
+  </div>
+  <div id="tactics-posts"></div>
+</div>
+</div>
+
+<!-- ══════════════════════════════ DRILLS PAGE ══════════════════════════════ -->
+<div id="page-drills" class="page">
+<div class="inner-page">
+  <div class="inner-page-header">
+    <div class="inner-page-title">⚽ Training Drills</div>
+    <div class="inner-page-sub">Drill library, training plans & session videos · by Kots</div>
+  </div>
+  <div id="drills-posts"></div>
+</div>
+</div>
+
+<!-- ══════════════════════════════ CALENDAR PAGE ══════════════════════════════ -->
+<div id="page-calendar" class="page">
+<div class="cal-page-wrap">
+  <div class="cal-header">
+    <div class="cal-header-title">📅 Calendar</div>
+    <div class="cal-header-sub">UFA 2025/26 · Click on a game day to see the full day schedule</div>
+  </div>
+  <div class="month-tabs">
+    <button class="month-tab active" onclick="showMonth(0,this)">Απρίλιος</button>
+    <button class="month-tab" onclick="showMonth(1,this)">Μάιος</button>
+    <button class="month-tab" onclick="showMonth(2,this)">Ιούνιος</button>
+  </div>
+  <div class="cal-grid-wrap">
+    <div class="cal-dow-row">
+      <div class="cal-dow">Δευ</div>
+      <div class="cal-dow">Τρί</div>
+      <div class="cal-dow">Τετ</div>
+      <div class="cal-dow">Πέμ</div>
+      <div class="cal-dow">Παρ</div>
+      <div class="cal-dow">Σαβ</div>
+      <div class="cal-dow">Κυρ</div>
+    </div>
+    <div class="cal-days" id="cal-days"></div>
+  </div>
+</div>
+</div>
+<!-- END CALENDAR -->
+
+<!-- ── DAY DETAIL MODAL ── -->
+<div class="day-modal-overlay" id="day-modal-overlay" onclick="closeDayModal(event)">
+  <div class="day-modal">
+    <div class="day-modal-head">
+      <div class="day-modal-title" id="dm-title">—</div>
+      <button class="day-modal-close" onclick="closeDayModal()">×</button>
+    </div>
+    <div class="day-modal-body" id="dm-body"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// CMS DATA — loaded from /content/*.json or falls back to embedded data
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const EMBEDDED = {
+  omada:     [{"id": 3, "type": "trainplan", "title": "Training plan — pressing triggers & set pieces", "date": "2026-04-08", "body": "## Session focus\n\nToday we work on two key areas: **pressing triggers** and **corner routines**.\n\n### Pressing\n\nPress in pairs from the front. Trigger = GK pass to CB or slow build-up. Once triggered, the two forwards close immediately, midfield shifts to cut passing lanes.\n\n### Set pieces\n\nCorner routine A: near-post flick-on. Corner routine B: pull-back to the edge. Practice both 5 times each.\n\n### Notes\n\n- Focus on compactness when we don't have the ball\n- Fast transition the moment we win it — no hesitation", "videos": []}, {"id": 2, "type": "postmatch", "title": "Post-match — 2–1 win vs AEK W", "date": "2026-04-04", "body": "## What worked ✓\n\n**High press in the first half** — we won the ball high up the pitch 4 times and converted 2. The pressing triggers were read well.\n\n**Quick transitions** — as soon as we won the ball we moved fast. The striker's run behind the line was excellent.\n\n## What to fix ✗\n\n**Defensive shape in 2nd half** — after going 2–0 up we dropped too deep and let them play. We need to stay compact and keep pressing even when leading.\n\n**Spacing** — the gap between midfield and defence grew too large after 60 min. We'll work on this in Tuesday's session.", "videos": []}, {"id": 1, "type": "prematch", "title": "Pre-match briefing — vs ΜΠΑΛΙΤΣΑ", "date": "2026-04-14", "body": "## Game plan\n\nWe press in a **4-3-3 high block**.\n\n### Pressing triggers\n- GK pass to CB → press immediately\n- Slow build-up from their defence → all three forwards engage\n- Their full-back receiving with back to goal → nearest winger closes\n\n### Attacking\n\nExploit wide areas — their full-backs push high and leave space in behind. Our wingers should make runs in behind on every transition.\n\n### Set pieces\n\n- Corners: routine A (near-post)\n- Free kicks in our half: long ball to the striker's run", "videos": []}],
+  tactics:   [{"id": 2, "type": "defense", "title": "Low block 5-4-1 — away games vs stronger teams", "date": "2026-04-10", "body": "## Shape\n\n**5-4-1** — five defenders, four midfielders, one striker holding the ball up.\n\n## When to use\n\nAway games against top-3 teams. Also useful when we are protecting a lead late in the game.\n\n## Key principles\n\n1. **Stay compact** — no more than 25m between defensive and midfield lines\n2. **No individual pressing** — press only as a unit on a trigger\n3. **Win the ball → transition fast** — long ball to the striker's run immediately\n4. **Second balls** — midfield must be aggressive winning loose balls in front of the block\n\n## Triggers to press out of the low block\n\n- Their CB plays backwards to the GK\n- Their full-back receives with no pressure and head is down", "videos": []}, {"id": 1, "type": "attack", "title": "High press 4-3-3", "date": "2026-04-01", "body": "## Shape\n\n**4-3-3** — three forwards press in pairs from the front.\n\n## Pressing triggers\n\n- GK pass to CB → two forwards engage immediately\n- Slow build-up → all three forwards press\n- Their pivot receives and turns → nearest midfielder closes\n\n## What the rest of the team does\n\nMidfield shifts towards the ball to cut passing lanes. The two wide midfielders tuck in. Defenders push up to compress space and stay close to the midfield line.\n\n## If the press is broken\n\nReset immediately into a 4-4-2 mid-block. Don't chase the ball — get organised.", "videos": []}],
+  drills:    [{"id": 3, "type": "pressing", "title": "Pressing triggers — 3-zone drill", "date": "2026-04-05", "body": "## Setup\n\n- Full pitch split into 3 zones\n- Full squad\n- Duration: 30 min\n\n## How it works\n\nTeam A builds from the back. Team B presses. Each zone has a specific rule:\n\n**Zone 1 (defensive third):** No pressure — let them build\n\n**Zone 2 (middle third):** Press on trigger (back pass or GK touch)\n\n**Zone 3 (attacking third):** Full press immediately on every touch\n\n## Key coaching points\n\n- Press in pairs — never alone\n- After pressing, recover shape quickly\n- Communication — call the press out loud\n\n## Progressions\n\n1. Walk through the zones first\n2. Add light resistance\n3. Full intensity — game realistic", "videos": []}, {"id": 2, "type": "shooting", "title": "Finishing under pressure — 1v1 with keeper", "date": "2026-03-28", "body": "## Setup\n\n- Half-pitch\n- Full squad in pairs\n- Duration: 25 min\n\n## How it works\n\nPlayer A and Player B do a quick 1-2 combination on the edge of the box. After the combination, Player A receives the ball and finishes 1v1 with the keeper. Player B applies light pressure from behind.\n\n## Key coaching points\n\n- First touch should set up the shot — not take you away from goal\n- Decide early: near post or far post\n- Stay composed — don't rush the finish\n\n## Variations\n\n- Add a passive defender at the edge of the area\n- Vary the starting position (left side, right side, central)", "videos": []}, {"id": 1, "type": "ballctrl", "title": "Rondo 4v2 — ball control & awareness", "date": "2026-03-20", "body": "## Setup\n\n- Small square (10x10m)\n- 6 players minimum, 12 maximum\n- Duration: 20 min\n\n## Rules\n\n4 players keep the ball, 2 players press in the middle.\n\n- One-touch passing only (or two-touch for beginners)\n- If the 2 win the ball, the player who lost it goes into the middle\n- Winner stays — keep track of who avoids going in\n\n## Key coaching points\n\n- Constant movement — don't stand still after passing\n- Open body shape to see all options before receiving\n- Quick decision-making — the ball should move faster than the defenders\n\n## Progressions\n\n1. Two-touch allowed\n2. One-touch only\n3. Add a neutral player who always plays with the team in possession (5v2)", "videos": []}],
+  ticker:    ["Επόμενος αγώνας vs BEAVERLY · Σαβ 10 Μαΐ · 17:00 · UFA Round 4", "Aggressive pressing, force mistakes, never give them time", "Season 2025/26 · 4W · 1D · 2L — keep pushing!", "Compactness off the ball · fast transitions on the win", "Κάθε Τρίτη προπόνηση — να είστε έτοιμες!"],
+  standings: [{"team": "BECAZZES", "gp": 7, "w": 4, "d": 1, "l": 2, "gf": 14, "ga": 9}, {"team": "BEAVERLY", "gp": 0, "w": 0, "d": 0, "l": 0, "gf": 0, "ga": 0}, {"team": "ΦΑΛΤΣΑ", "gp": 0, "w": 0, "d": 0, "l": 0, "gf": 0, "ga": 0}, {"team": "ΑΛΑΝΑ", "gp": 0, "w": 0, "d": 0, "l": 0, "gf": 0, "ga": 0}, {"team": "ΑΜΠΑΛΟΣ", "gp": 0, "w": 0, "d": 0, "l": 0, "gf": 0, "ga": 0}, {"team": "ΜΠΑΛΙΤΣΑ", "gp": 0, "w": 0, "d": 0, "l": 0, "gf": 0, "ga": 0}, {"team": "ΠΕΝΤΕΛΕΙΕΣ", "gp": 0, "w": 0, "d": 0, "l": 0, "gf": 0, "ga": 0}, {"team": "ΚΙΤΡΙΝΑ ΓΙΛΕΚΑ", "gp": 0, "w": 0, "d": 0, "l": 0, "gf": 0, "ga": 0}, {"team": "ΚΑΤΣΙΚΟΠΟΔΑΡΕΣ", "gp": 0, "w": 0, "d": 0, "l": 0, "gf": 0, "ga": 0}],
+  passwords: ["becazzes2026", "kotsonly", "ufa25"]
+};
+
+let CMS = {};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PASSWORD GATE
+// ═══════════════════════════════════════════════════════════════════════════════
+const SESSION_KEY = 'bfc_kots_auth';
+
+async function initGate() {
+  // Already authenticated this session?
+  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    document.getElementById('pw-gate').classList.add('hidden');
+    return;
+  }
+  // Show gate — fetch passwords in background
+  // (gate is visible by default in HTML)
+}
+
+function checkPassword() {
+  const input = document.getElementById('pw-input');
+  const errorEl = document.getElementById('pw-error');
+  const val = (input.value || '').trim();
+  if (!val) return;
+
+  // Get passwords: from CMS if loaded, else fallback to embedded
+  const list = (CMS.passwords && CMS.passwords.length) ? CMS.passwords : EMBEDDED.passwords;
+  const ok = list.some(p => p === val || (typeof p === 'object' && p.password === val));
+
+  if (ok) {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    errorEl.classList.add('hidden');
+    const gate = document.getElementById('pw-gate');
+    gate.classList.add('pw-fade-out');
+    setTimeout(() => gate.classList.add('hidden'), 500);
+  } else {
+    errorEl.classList.remove('hidden');
+    input.classList.add('error', 'shake');
+    input.value = '';
+    setTimeout(() => input.classList.remove('shake', 'error'), 600);
+    input.focus();
+  }
+}
+
+async function loadContent() {
+  // Use relative paths so it works on GitHub Pages subfolders AND Netlify root
+  const base = (function() {
+    const p = window.location.pathname;
+    // Strip filename if present, keep trailing slash
+    return p.endsWith('/') ? p : p.substring(0, p.lastIndexOf('/') + 1);
+  })();
+
+  const cats = ['omada','tactics','drills','ticker','standings','passwords'];
+  // Pre-fill with embedded data immediately so ticker/UI renders even if fetch is slow
+  cats.forEach(cat => { CMS[cat] = EMBEDDED[cat]; });
+  // Then try to load fresh CMS data (with 4s timeout for slow mobile)
+  await Promise.all(cats.map(async cat => {
+    try {
+      const controller = new AbortController();
+      const tid = setTimeout(() => controller.abort(), 4000);
+      const r = await fetch(base + `content/${cat}.json`, {signal: controller.signal});
+      clearTimeout(tid);
+      if (!r.ok) throw new Error();
+      const d = await r.json();
+      CMS[cat] = d.posts || d.teams || d.messages || d.passwords || d;
+    } catch(e) {
+      /* keep EMBEDDED fallback already set above */
+    }
+  }));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SEASON SCHEDULE — all 10 rounds
+// ═══════════════════════════════════════════════════════════════════════════════
+const SEASON_SCHEDULE = [
+  {date:'2026-04-19', round:'1Η ΑΓΩΝΙΣΤΙΚΗ', matches:[
+    {n:1,h:'ΑΜΠΑΛΟΣ',a:'ΑΛΑΝΑ',t:'17:00'},
+    {n:2,h:'BECAZZES',a:'ΜΠΑΛΙΤΣΑ',t:'18:00',bec:true},
+    {n:3,h:'ΚΙΤΡΙΝΑ ΓΙΛΕΚΑ',a:'ΚΑΤΣΙΚΟΠΟΔΑΡΕΣ',t:'19:00'},
+    {n:4,h:'ΦΑΛΤΣΑ',a:'BEAVERLY',t:'20:00'}
+  ], bye:'ΠΕΝΤΕΛΕΙΕΣ'},
+  {date:'2026-04-26', round:'2Η ΑΓΩΝΙΣΤΙΚΗ', matches:[
+    {n:1,h:'ΚΑΤΣΙΚΟΠΟΔΑΡΕΣ',a:'ΦΑΛΤΣΑ',t:'17:00'},
+    {n:2,h:'BECAZZES',a:'ΚΙΤΡΙΝΑ ΓΙΛΕΚΑ',t:'18:00',bec:true},
+    {n:3,h:'ΠΕΝΤΕΛΕΙΕΣ',a:'ΑΜΠΑΛΟΣ',t:'19:00'},
+    {n:4,h:'ΑΛΑΝΑ',a:'ΜΠΑΛΙΤΣΑ',t:'20:00'}
+  ], bye:'BEAVERLY'},
+  {date:'2026-05-03', round:'3Η ΑΓΩΝΙΣΤΙΚΗ', matches:[
+    {n:1,h:'ΜΠΑΛΙΤΣΑ',a:'ΠΕΝΤΕΛΕΙΕΣ',t:'17:00'},
+    {n:2,h:'ΚΙΤΡΙΝΑ ΓΙΛΕΚΑ',a:'ΑΛΑΝΑ',t:'18:00'},
+    {n:3,h:'BECAZZES',a:'ΦΑΛΤΣΑ',t:'19:00',bec:true},
+    {n:4,h:'BEAVERLY',a:'ΚΑΤΣΙΚΟΠΟΔΑΡΕΣ',t:'20:00'}
+  ], bye:'ΑΜΠΑΛΟΣ'},
+  {date:'2026-05-10', round:'4Η ΑΓΩΝΙΣΤΙΚΗ', matches:[
+    {n:1,h:'BECAZZES',a:'BEAVERLY',t:'17:00',bec:true},
+    {n:2,h:'ΦΑΛΤΣΑ',a:'ΑΛΑΝΑ',t:'18:00'},
+    {n:3,h:'ΑΜΠΑΛΟΣ',a:'ΜΠΑΛΙΤΣΑ',t:'19:00'},
+    {n:4,h:'ΠΕΝΤΕΛΕΙΕΣ',a:'ΚΙΤΡΙΝΑ ΓΙΛΕΚΑ',t:'20:00'}
+  ], bye:'ΚΑΤΣΙΚΟΠΟΔΑΡΕΣ'},
+  {date:'2026-05-17', round:'5Η ΑΓΩΝΙΣΤΙΚΗ', matches:[
+    {n:1,h:'ΚΙΤΡΙΝΑ ΓΙΛΕΚΑ',a:'ΑΜΠΑΛΟΣ',t:'17:00'},
+    {n:2,h:'BEAVERLY',a:'ΑΛΑΝΑ',t:'18:00'},
+    {n:3,h:'ΦΑΛΤΣΑ',a:'ΠΕΝΤΕΛΕΙΕΣ',t:'19:00'},
+    {n:4,h:'BECAZZES',a:'ΚΑΤΣΙΚΟΠΟΔΑΡΕΣ',t:'20:00',bec:true}
+  ], bye:'ΜΠΑΛΙΤΣΑ'},
+  {date:'2026-05-24', round:'6Η ΑΓΩΝΙΣΤΙΚΗ', matches:[
+    {n:1,h:'ΑΜΠΑΛΟΣ',a:'ΦΑΛΤΣΑ',t:'17:00'},
+    {n:2,h:'ΠΕΝΤΕΛΕΙΕΣ',a:'BEAVERLY',t:'18:00'},
+    {n:3,h:'ΜΠΑΛΙΤΣΑ',a:'ΚΙΤΡΙΝΑ ΓΙΛΕΚΑ',t:'19:00'},
+    {n:4,h:'ΑΛΑΝΑ',a:'ΚΑΤΣΙΚΟΠΟΔΑΡΕΣ',t:'20:00'}
+  ], bye:'BECAZZES'},
+  {date:'2026-05-31', round:'7Η ΑΓΩΝΙΣΤΙΚΗ', matches:[
+    {n:1,h:'BECAZZES',a:'ΑΛΑΝΑ',t:'17:00',bec:true},
+    {n:2,h:'ΜΠΑΛΙΤΣΑ',a:'ΦΑΛΤΣΑ',t:'18:00'},
+    {n:3,h:'BEAVERLY',a:'ΑΜΠΑΛΟΣ',t:'19:00'},
+    {n:4,h:'ΚΑΤΣΙΚΟΠΟΔΑΡΕΣ',a:'ΠΕΝΤΕΛΕΙΕΣ',t:'20:00'}
+  ], bye:'ΚΙΤΡΙΝΑ ΓΙΛΕΚΑ'},
+  {date:'2026-06-06', round:'8Η ΑΓΩΝΙΣΤΙΚΗ', matches:[
+    {n:1,h:'ΜΠΑΛΙΤΣΑ',a:'BEAVERLY',t:'17:00'},
+    {n:2,h:'ΠΕΝΤΕΛΕΙΕΣ',a:'BECAZZES',t:'18:00',bec:true},
+    {n:3,h:'ΑΜΠΑΛΟΣ',a:'ΚΑΤΣΙΚΟΠΟΔΑΡΕΣ',t:'19:00'},
+    {n:4,h:'ΚΙΤΡΙΝΑ ΓΙΛΕΚΑ',a:'ΦΑΛΤΣΑ',t:'20:00'}
+  ], bye:'ΑΛΑΝΑ'},
+  {date:'2026-06-07', round:'9Η ΑΓΩΝΙΣΤΙΚΗ', matches:[
+    {n:1,h:'BEAVERLY',a:'ΚΙΤΡΙΝΑ ΓΙΛΕΚΑ',t:'17:00'},
+    {n:2,h:'ΚΑΤΣΙΚΟΠΟΔΑΡΕΣ',a:'ΜΠΑΛΙΤΣΑ',t:'18:00'},
+    {n:3,h:'ΑΛΑΝΑ',a:'ΠΕΝΤΕΛΕΙΕΣ',t:'19:00'},
+    {n:4,h:'BECAZZES',a:'ΑΜΠΑΛΟΣ',t:'20:00',bec:true}
+  ], bye:'ΦΑΛΤΣΑ'},
+  {date:'2026-06-14', round:'ΤΕΛΙΚΗ — PLAYOFFS', playoff:true, final:true, matches:[
+    {n:1,h:'ΘΕΣΗ 7',a:'ΘΕΣΗ 8',t:'17:00'},
+    {n:2,h:'ΘΕΣΗ 5',a:'ΘΕΣΗ 6',t:'18:00'},
+    {n:3,h:'ΘΕΣΗ 3',a:'ΘΕΣΗ 4',t:'19:00'},
+    {n:4,h:'ΘΕΣΗ 1',a:'ΘΕΣΗ 2',t:'20:00'},
+    {n:5,h:'BECAZZES',a:'???',t:'TBD',bec:true,final:true}
+  ]}
+];
+
+const TRAINING_DAYS = [
+  '2026-04-23',
+  '2026-04-28',
+  '2026-05-07',
+  '2026-05-12',
+  '2026-05-19',
+  '2026-05-26',
+  '2026-06-02',
+  '2026-06-09'
+];
+
+// Build lookup maps
+const GAME_MAP = {};    // dateStr -> round data
+const TRAINING_SET = new Set(TRAINING_DAYS);
+
+SEASON_SCHEDULE.forEach(r => { GAME_MAP[r.date] = r; });
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DYNAMIC COUNTDOWN
+// ═══════════════════════════════════════════════════════════════════════════════
+function findNextBecGame() {
+  const now = new Date();
+  for (const rd of SEASON_SCHEDULE) {
+    const becMatch = rd.matches ? rd.matches.find(m => m.bec) : null;
+    if (!becMatch) continue;
+    const [y,mo,d] = rd.date.split('-').map(Number);
+    const tParts = becMatch.t && becMatch.t.includes(':') ? becMatch.t.split(':').map(Number) : [20,0];
+    const gd = new Date(y, mo-1, d, tParts[0], tParts[1]);
+    if (gd > now) {
+      const opp = becMatch.h === 'BECAZZES' ? becMatch.a : becMatch.h;
+      const isHome = becMatch.h === 'BECAZZES';
+      return {date:gd, opp, round:rd.round, time:becMatch.t, home:isHome};
+    }
+  }
+  return null;
+}
+
+let nextGame = null;
+function initCountdown() {
+  nextGame = findNextBecGame();
+  const titleEl  = document.getElementById('cd-matchup');
+  const detailEl = document.getElementById('cd-detail');
+  if (!nextGame) {
+    if (titleEl) titleEl.textContent = 'Season Complete!';
+    if (detailEl) detailEl.textContent = 'UFA 2025/26 season has ended.';
+    document.getElementById('cd-wrap').innerHTML = '<div class="cd-ended">🏆 Final standings decided</div>';
+    return;
+  }
+  if (titleEl) titleEl.textContent = 'BECAZZES vs ' + nextGame.opp;
+  if (detailEl) {
+    const dd = nextGame.date;
+    const dayNames = ['Κυρ','Δευ','Τρί','Τετ','Πέμ','Παρ','Σαβ'];
+    const dayStr = dayNames[dd.getDay()];
+    const opts = {day:'numeric',month:'long'};
+    const dateStr = dd.toLocaleDateString('el-GR', opts);
+    detailEl.textContent = dayStr + ' ' + dateStr + ' · ' + nextGame.time + ' · ' + nextGame.round + (nextGame.home?' · HOME':' · AWAY');
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+function tick() {
+  if (!nextGame) return;
+  const diff = nextGame.date - new Date();
+  const pad = v => String(Math.max(0,v)).padStart(2,'0');
+  const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=pad(v); };
+  if (diff <= 0) {
+    set('cd-d',0); set('cd-h',0); set('cd-m',0); set('cd-s',0);
+    return;
+  }
+  set('cd-d', Math.floor(diff/86400000));
+  set('cd-h', Math.floor((diff%86400000)/3600000));
+  set('cd-m', Math.floor((diff%3600000)/60000));
+  set('cd-s', Math.floor((diff%60000)/1000));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TICKER
+// ═══════════════════════════════════════════════════════════════════════════════
+function renderTicker() {
+  const msgs = CMS.ticker || [];
+  const track = document.getElementById('ticker-track');
+  if (!track || !msgs.length) return;
+  // Duplicate for seamless loop
+  const items = [...msgs, ...msgs].map(m =>
+    `<span class="ticker-item">${m}</span>`
+  ).join('');
+  track.innerHTML = items;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ROUTER
+// ═══════════════════════════════════════════════════════════════════════════════
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a[data-page], .nav-drawer a[data-page]').forEach(a => a.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  document.querySelectorAll('[data-page="'+id+'"]').forEach(a => a.classList.add('active'));
+  window.scrollTo(0, 0);
+  if (id === 'calendar') renderCalendar(currentMonth);
+}
+function toggleMobileNav() {
+  const btn = document.getElementById('nav-hamburger');
+  const drawer = document.getElementById('nav-drawer');
+  btn.classList.toggle('open');
+  drawer.classList.toggle('open');
+}
+function closeMobileNav() {
+  document.getElementById('nav-hamburger').classList.remove('open');
+  document.getElementById('nav-drawer').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TYPE META
+// ═══════════════════════════════════════════════════════════════════════════════
+const TYPE_META = {
+  prematch:  {label:'Pre-match',    cls:'chip-prematch',  thumbBg:'#2a1040',icon:'▶'},
+  postmatch: {label:'Post-match',   cls:'chip-postmatch', thumbBg:'#1a3d24',icon:'✓'},
+  trainplan: {label:'Training plan',cls:'chip-trainplan', thumbBg:'#2F1839',icon:'≡'},
+  attack:    {label:'Attack',       cls:'chip-attack',    thumbBg:'#1b3d50',icon:'⚡'},
+  defense:   {label:'Defense',      cls:'chip-defense',   thumbBg:'#1a3d24',icon:'🛡'},
+  setpiece:  {label:'Set piece',    cls:'chip-setpiece',  thumbBg:'#2a1040',icon:'⚙'},
+  ballctrl:  {label:'Ball ctrl',    cls:'chip-ballctrl',  thumbBg:'#3d2800',icon:'⚽'},
+  shooting:  {label:'Shooting',     cls:'chip-shooting',  thumbBg:'#3d1a1a',icon:'🎯'},
+  pressing:  {label:'Pressing',     cls:'chip-pressing',  thumbBg:'#1b3d50',icon:'💨'},
+  passing:   {label:'Passing',      cls:'chip-passing',   thumbBg:'#2a1040',icon:'↗'},
+  fitness:   {label:'Fitness',      cls:'chip-fitness',   thumbBg:'#1a3d24',icon:'💪'},
+  other:     {label:'Other',        cls:'chip-other',     thumbBg:'#2F1839',icon:'📌'},
+};
+const TAG_CLS = {attack:'tag-sky',defense:'tag-green',setpiece:'tag-purple',ballctrl:'tag-orange',shooting:'tag-sky',pressing:'tag-sky',passing:'tag-purple',fitness:'tag-green',other:'tag-purple',prematch:'tag-sky',postmatch:'tag-green',trainplan:'tag-purple'};
+const TEAM_NAME_MAP = {
+  'BALITSA':'ΜΠΑΛΙΤΣΑ','MPALITSA':'ΜΠΑΛΙΤΣΑ','MBALITSA':'ΜΠΑΛΙΤΣΑ',
+  'PENTELIES':'ΠΕΝΤΕΛΕΙΕΣ','PENTELIEIS':'ΠΕΝΤΕΛΕΙΕΣ','PENTELEIES':'ΠΕΝΤΕΛΕΙΕΣ',
+  'AMPALOS':'ΑΜΠΑΛΟΣ','AMBALOS':'ΑΜΠΑΛΟΣ',
+  'ALANA':'ΑΛΑΝΑ',
+  'KATSIKOPODARES':'ΚΑΤΣΙΚΟΠΟΔΑΡΕΣ','KATSIKOPODARIS':'ΚΑΤΣΙΚΟΠΟΔΑΡΕΣ',
+  'KITRINA GILEKA':'ΚΙΤΡΙΝΑ ΓΙΛΕΚΑ',
+  'FALTSA':'ΦΑΛΤΣΑ','PHALTSA':'ΦΑΛΤΣΑ',
+};
+function fixTeamNames(text) {
+  if (!text) return text;
+  let result = text;
+  for (const [eng, gr] of Object.entries(TEAM_NAME_MAP)) {
+    result = result.replace(new RegExp('\b' + eng + '\b', 'gi'), gr);
+  }
+  return result;
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// VIDEO EMBEDDING
+// ═══════════════════════════════════════════════════════════════════════════════
+function embedVideo(url) {
+  if (!url || !url.trim()) return '';
+  url = url.trim();
+
+  // YouTube: youtu.be/ID or youtube.com/watch?v=ID or /embed/ID
+  const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([\w-]{11})/);
+  if (yt) {
+    return `<div class="video-embed-wrap">
+      <iframe src="https://www.youtube.com/embed/${yt[1]}" allowfullscreen loading="lazy"></iframe>
+    </div>`;
+  }
+
+  // Vimeo: vimeo.com/ID
+  const vi = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vi) {
+    return `<div class="video-embed-wrap">
+      <iframe src="https://player.vimeo.com/video/${vi[1]}" allowfullscreen loading="lazy"></iframe>
+    </div>`;
+  }
+
+  // Google Drive: drive.google.com/file/d/ID/view → /preview
+  const gd = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  if (gd) {
+    return `<div class="video-embed-wrap">
+      <iframe src="https://drive.google.com/file/d/${gd[1]}/preview" allowfullscreen loading="lazy"></iframe>
+    </div>`;
+  }
+
+  // Fallback: clickable link
+  return `<a class="video-link-fallback" href="${url}" target="_blank" rel="noopener">
+    <span>▶</span> Watch video
+  </a>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TOGGLE POST EXPAND / COLLAPSE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function fixImagePaths() {
+  const base = (function(){
+    const p = window.location.pathname;
+    return p.endsWith('/') ? p : p.substring(0, p.lastIndexOf('/')+1);
+  })();
+  document.querySelectorAll('.md-body img').forEach(img => {
+    const src = img.getAttribute('src') || '';
+    if (src.startsWith('/uploads/')) {
+      img.src = base + 'uploads/' + src.slice('/uploads/'.length);
+    }
+  });
+}
+function togglePost(id) {
+  const card = document.getElementById('post-' + id);
+  if (!card) return;
+  const expanded = card.classList.toggle('expanded');
+  if (expanded) fixImagePaths();
+  const btn = card.querySelector('.post-expand-btn');
+  if (btn) btn.innerHTML = expanded
+    ? `See less <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 9l5-5 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    : `See more <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// RENDER POSTS
+// ═══════════════════════════════════════════════════════════════════════════════
+function mdToPlain(md) {
+  // Strip markdown for preview text
+  return (md || '')
+    .replace(/#{1,6}\s+/g, '')
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[(.+?)\]\(.*?\)/g, '$1')
+    .replace(/`(.+?)`/g, '$1')
+    .replace(/^[-*]\s+/gm, '')
+    .replace(/\d+\.\s+/g, '')
+    .replace(/\n+/g, ' ')
+    .trim();
+}
+
+function fmtPostDate(raw) {
+  if (!raw) return new Date().toLocaleDateString('el-GR', {day:'numeric',month:'short',year:'numeric'});
+  // If ISO date (YYYY-MM-DD or YYYY-MM-DDTHH:mm), format nicely; else show as-is
+  if (/^\d{4}-\d{2}-\d{2}/.test(raw)) {
+    const d = new Date(raw);
+    return isNaN(d) ? raw : d.toLocaleDateString('el-GR', {day:'numeric',month:'short',year:'numeric'});
+  }
+  return raw;
+}
+
+function renderPosts(cat) {
+  const el = document.getElementById(cat + '-posts');
+  if (!el) return;
+  // Sort newest first — handle both ISO dates (YYYY-MM-DD) and display strings
+  const posts = [...(CMS[cat] || [])].sort((a, b) => {
+    const da = a.date || '', db = b.date || '';
+    // ISO dates sort lexicographically correctly; for display strings fallback to index order
+    if (/^\d{4}/.test(da) && /^\d{4}/.test(db)) return db.localeCompare(da);
+    return 0; // keep original order if dates aren't ISO
+  });
+  if (!posts.length) { el.innerHTML = '<div class="no-posts">No posts yet.</div>'; return; }
+
+  el.innerHTML = posts.map((p, idx) => {
+    const meta = TYPE_META[p.type] || TYPE_META.other;
+    // Use p.id if present, else slug from title, else index — ensures every card has a unique clickable id
+    const slug = p.id || (p.title ? p.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') : null) || String(idx);
+    const id = cat + '-' + slug;
+
+    // Preview text (plain, truncated)
+    const plain = mdToPlain(p.body || p.text || '');
+    const preview = plain.length > 160 ? plain.slice(0, 160) + '…' : plain;
+
+    // Full markdown body
+    const fullHtml = (typeof marked !== 'undefined' && (p.body || p.text))
+      ? marked.parse(p.body || p.text)
+      : `<p>${(p.body || p.text || '').replace(/\n/g, '<br>')}</p>`;
+
+    // Videos
+    const videos = (p.videos || []).filter(v => v && v.trim());
+    const videosHtml = videos.map(v => embedVideo(v)).join('');
+
+    return `<div class="post-card" id="post-${id}">
+      <div class="post-card-head">
+        <div class="post-meta">
+          <span class="post-type-chip ${meta.cls}">${meta.label}</span>
+          <strong>Kots</strong> · ${fmtPostDate(p.date)}
+        </div>
+        <div class="post-title">${fixTeamNames(p.title || 'Post')}</div>
+      </div>
+
+      <div class="post-preview">
+        <div class="md-body">${preview}</div>
+      </div>
+
+      <div class="post-full">
+        <div class="md-body">${fullHtml}</div>
+      </div>
+
+      ${videosHtml ? `<div class="post-videos">${videosHtml}</div>` : ''}
+
+      <button class="post-expand-btn" onclick="togglePost('${id}')">
+        See more <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// RENDER STANDINGS
+// ═══════════════════════════════════════════════════════════════════════════════
+function renderStandings() {
+  const tbody = document.getElementById('standings-body');
+  if (!tbody) return;
+  const teams = [...(CMS.standings||[])].sort((a,b) => {
+    const pts = t => t.w*3+t.d;
+    const gd  = t => t.gf-t.ga;
+    // Sort: points → goal difference → wins → goals scored
+    return (pts(b)-pts(a)) || (gd(b)-gd(a)) || (b.w-a.w) || (b.gf-a.gf);
+  });
+  tbody.innerHTML = teams.map((t,i) => {
+    const gd=t.gf-t.ga, pts=t.w*3+t.d, mine=t.team==='BECAZZES';
+    return `<tr class="${mine?'my-team':''}">
+      <td class="s-pos">${i+1}</td><td>${t.team}</td>
+      <td>${t.gp}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td>
+      <td class="${gd>0?'s-gd-pos':gd<0?'s-gd-neg':''}">${gd>0?'+':''}${gd}</td>
+      <td class="s-pts">${pts}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// HOME PREVIEWS
+// ═══════════════════════════════════════════════════════════════════════════════
+function renderOmadaGrid() {
+  const el = document.getElementById('home-omada-grid');
+  if (!el) return;
+  const posts = (CMS.omada||[]).slice(0,3);
+  if (!posts.length) { el.innerHTML='<div class="no-preview" style="grid-column:1/-1;padding:1rem;color:var(--faint);">No posts yet.</div>'; return; }
+  el.innerHTML = posts.map(p => {
+    const meta = TYPE_META[p.type]||TYPE_META.other;
+    const hasV = (p.videos||[]).some(v=>v&&v.trim());
+    const mediaTag = hasV ? '🎬 VIDEO' : '✏️ TEXT';
+    const preview = mdToPlain(p.body || p.text || '');
+    const snippet = preview.length > 70 ? preview.slice(0,70)+'…' : preview;
+    return `<div class="omada-card" onclick="showPage('omada')">
+      <div class="omada-thumb" style="background:${meta.thumbBg}">
+        <div class="omada-thumb-icon">${meta.icon}</div>
+      </div>
+      <div class="omada-body">
+        <span class="post-type-chip ${meta.cls}">${meta.label}</span>
+        <div class="omada-card-title">${p.title || snippet || 'Post'}</div>
+        <div class="omada-card-meta">📅 ${p.date} · Kots</div>
+        <div class="omada-card-tags"><span class="media-tag">${mediaTag}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderMini(cat, containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const posts = (CMS[cat]||[]).slice(0,3);
+  if (!posts.length) { el.innerHTML='<div class="no-preview" style="padding:1rem;color:var(--faint);">No posts yet.</div>'; return; }
+  el.innerHTML = posts.map(p => {
+    const meta = TYPE_META[p.type]||TYPE_META.other;
+    const tagCls = TAG_CLS[p.type]||'tag-purple';
+    const name = fixTeamNames(p.title || mdToPlain(p.body||p.text||'').slice(0,45) || 'Post');
+    return `<div class="mini-item" onclick="showPage('${cat}')">
+      <div class="mini-thumb">${meta.icon}</div>
+      <div class="mini-info">
+        <div class="mini-name">${name.length>45?name.slice(0,45)+'…':name}</div>
+        <div class="mini-sub">${p.date}</div>
+      </div>
+      <span class="mini-tag ${tagCls}">${meta.label}</span>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// VISUAL CALENDAR
+// ═══════════════════════════════════════════════════════════════════════════════
+// months: 0=April2026, 1=May2026, 2=June2026
+const MONTHS = [
+  {year:2026, month:3,  name:'Απρίλιος', days:30},  // month index 3 = April (0-based)
+  {year:2026, month:4,  name:'Μάιος',    days:31},
+  {year:2026, month:5,  name:'Ιούνιος',  days:30},
+];
+let currentMonth = 0;
+const today = new Date();
+today.setHours(0,0,0,0);
+
+function toDateStr(y,m,d) {
+  return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+
+function showMonth(idx, btn) {
+  currentMonth = idx;
+  document.querySelectorAll('.month-tab').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderCalendar(idx);
+}
+
+function renderCalendar(monthIdx) {
+  const {year, month, days} = MONTHS[monthIdx];
+  const container = document.getElementById('cal-days');
+  if (!container) return;
+
+  // Day of week for 1st of month (0=Sun, 1=Mon... shift to Mon-first)
+  const firstDow = new Date(year, month, 1).getDay(); // 0=Sun
+  const startOffset = (firstDow === 0) ? 6 : firstDow - 1; // Mon=0, Tue=1,...Sun=6
+
+  let html = '';
+
+  // Empty cells before month start
+  for (let i=0; i<startOffset; i++) {
+    html += '<div class="cal-cell empty"><div class="cal-day-num"></div></div>';
+  }
+
+  for (let d=1; d<=days; d++) {
+    const ds = toDateStr(year, month, d);
+    const rd = GAME_MAP[ds];
+    const isTrain = TRAINING_SET.has(ds);
+    const hasBecGame = rd && rd.matches && rd.matches.some(m => m.bec);
+    const hasAnyGame = !!rd;
+
+    const cellDate = new Date(year, month, d);
+    const isToday = cellDate.getTime() === today.getTime();
+
+    let cls = 'cal-cell';
+    if (!hasAnyGame && !isTrain) cls += '';
+    if (hasAnyGame && !isTrain) cls += hasBecGame ? ' has-game' : ' has-other';
+    if (!hasAnyGame && isTrain) cls += ' has-training';
+    if (hasAnyGame && isTrain) cls += ' has-both';
+    if (isToday) cls += ' is-today';
+
+    let events = '';
+
+    if (isTrain) {
+      events += '<div class="cal-event ev-training">🏋 Προπόνηση</div>';
+    }
+
+    if (rd) {
+      const becM = rd.matches ? rd.matches.find(m=>m.bec) : null;
+      if (becM) {
+        const opp = becM.h==='BECAZZES' ? becM.a : becM.h;
+        const isNext = nextGame && nextGame.date.toDateString() === cellDate.toDateString();
+        const isFinal = becM.final;
+        events += `<div class="cal-event ${isNext?'ev-game-next':'ev-game'}">${isFinal?'🏆':'⚽'} vs ${opp}</div>`;
+      } else if (!rd.playoff && rd.bye === 'BECAZZES') {
+        events += '<div class="cal-event ev-bye">⏸ Ρεπό</div>';
+      } else if (hasAnyGame) {
+        events += `<div class="cal-event" style="background:#f5f0fa;color:#6a1b9a;font-size:9px;">${rd.round.split(' ')[0]} Αγωνιστική</div>`;
+      }
+    }
+
+    const clickable = hasAnyGame || isTrain;
+    const onclick = clickable ? `onclick="openDayModal('${ds}')"` : '';
+
+    html += `<div class="${cls}" ${onclick}>
+      <div class="cal-day-num">${d}</div>
+      ${events}
+    </div>`;
+  }
+
+  // Fill trailing cells to complete the grid
+  const totalCells = startOffset + days;
+  const remainder = totalCells % 7;
+  if (remainder > 0) {
+    for (let i=remainder; i<7; i++) {
+      html += '<div class="cal-cell empty"><div class="cal-day-num"></div></div>';
+    }
+  }
+
+  container.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DAY DETAIL MODAL
+// ═══════════════════════════════════════════════════════════════════════════════
+const GREEK_MONTHS = ['Ιαν','Φεβ','Μαρ','Απρ','Μαΐ','Ιούν','Ιούλ','Αύγ','Σεπ','Οκτ','Νοε','Δεκ'];
+const GREEK_DAYS   = ['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'];
+
+function openDayModal(ds) {
+  const [y,mo,d] = ds.split('-').map(Number);
+  const dt = new Date(y, mo-1, d);
+  const titleEl = document.getElementById('dm-title');
+  const bodyEl  = document.getElementById('dm-body');
+
+  titleEl.textContent = GREEK_DAYS[dt.getDay()] + ', ' + d + ' ' + GREEK_MONTHS[mo-1] + ' ' + y;
+
+  let html = '';
+
+  const isTrain = TRAINING_SET.has(ds);
+  if (isTrain) {
+    html += `<div class="dm-training-row">
+      <div class="dm-training-icon">🏋</div>
+      <div>
+        <div class="dm-training-text">Προπόνηση Becazzes FC</div>
+        <div class="dm-training-sub">Training session · Full squad</div>
+      </div>
+    </div>`;
+  }
+
+  const rd = GAME_MAP[ds];
+  if (rd) {
+    html += `<div class="dm-round-label" style="margin-top:${isTrain?'16px':'0'}">${rd.round}</div>`;
+    if (rd.playoff) {
+      html += rd.matches.map(m => {
+        const isBec = m.bec;
+        return `<div class="dm-match-row ${isBec?'bec-match':''}">
+          <div class="dm-num">${m.n}</div>
+          <div class="dm-teams">${isBec?'<strong>':''}${m.h} – ${m.a}${isBec&&m.final?' 🏆':''}${isBec?'</strong>':''}</div>
+          <div class="dm-time">${m.t}</div>
+        </div>`;
+      }).join('');
+      const hasBecFinal = rd.matches.some(m=>m.bec&&m.final);
+      html += hasBecFinal
+        ? '<div style="font-size:12px;color:#c8a200;margin-top:8px;font-weight:700;">🏆 UFA ΤΕΛΙΚΟΣ — Becazzes FC · Αντίπαλος TBD</div>'
+        : '<div style="font-size:12px;color:#6a1b9a;margin-top:8px;font-weight:600;">🏆 UFA PLAYOFFS — Θέσεις από Βαθμολογία</div>';
+    } else {
+      html += rd.matches.map(m => {
+        const isBec = m.bec;
+        return `<div class="dm-match-row ${isBec?'bec-match':''}">
+          <div class="dm-num">${m.n}</div>
+          <div class="dm-teams">${isBec?'<strong>':''}${m.h} – ${m.a}${isBec?'</strong>':''}</div>
+          <div class="dm-time">${m.t}</div>
+        </div>`;
+      }).join('');
+      if (rd.bye) {
+        html += `<div class="dm-bye">⏸ Ρεπό: ${rd.bye}</div>`;
+      }
+    }
+  }
+
+  bodyEl.innerHTML = html;
+  document.getElementById('day-modal-overlay').classList.add('open');
+}
+
+function closeDayModal(e) {
+  if (!e || e.target === document.getElementById('day-modal-overlay')) {
+    document.getElementById('day-modal-overlay').classList.remove('open');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STATS STRIP — auto-populated from BECAZZES row in standings
+// ═══════════════════════════════════════════════════════════════════════════════
+function renderStats() {
+  const bec = (CMS.standings || []).find(t => t.team === 'BECAZZES');
+  if (!bec) return;
+  const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+  set('st-played', bec.gp);
+  set('st-record', bec.w + 'W · ' + bec.d + 'D · ' + bec.l + 'L');
+  set('st-gf', bec.gf);
+  set('st-ga', bec.ga);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  initGate();
+  await loadContent();
+  // Re-check passwords now that CMS data is loaded (gate still visible if unauthenticated)
+  initCountdown();
+  renderTicker();
+  renderStats();
+  renderStandings();
+  renderPosts('omada');
+  renderPosts('tactics');
+  renderPosts('drills');
+  fixImagePaths();
+  renderOmadaGrid();
+  renderMini('tactics','home-tactics-mini');
+  renderMini('drills','home-drills-mini');
+  renderCalendar(0);
+
+  // Auto-select month tab based on today
+  const todayMonth = today.getMonth(); // 0-based
+  let tabIdx = 0;
+  if (todayMonth === 4) tabIdx = 1;  // May
+  else if (todayMonth === 5) tabIdx = 2; // June
+  else if (todayMonth === 3) tabIdx = 0; // April
+  if (tabIdx > 0) {
+    const tabs = document.querySelectorAll('.month-tab');
+    tabs.forEach(t=>t.classList.remove('active'));
+    if (tabs[tabIdx]) tabs[tabIdx].classList.add('active');
+    currentMonth = tabIdx;
+    renderCalendar(tabIdx);
+  }
+});
+</script>
+</body>
+</html>
