@@ -1,0 +1,35 @@
+{
+  "posts": [
+    {
+      "id": 3,
+      "type": "attack",
+      "title": "Formation Movement (pyramids)",
+      "date": "2026-04-15",
+      "body": "Watch the animation below to understand exactly how our formation moves — both in attack (upsidedown pyramid) and in defence (pyramid). Study the movement of your specific position.",
+      "videos": [
+        "https://youtu.be/zspPKZbecVY"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "attack",
+      "title": "Build-up ideas",
+      "date": "2026-04-15",
+      "body": "Two animations showing our build-up combinations. Watch the **Stringer as Kolona** — when she receives with her back to goal she creates a skulaki square, triggering the FullBack and CM to make their runs.",
+      "videos": [
+        "https://youtu.be/yvSjIEvYgWk",
+        "https://youtu.be/nRy99Pm3sms"
+      ]
+    },
+    {
+      "id": 1,
+      "type": "defense",
+      "title": "Pressing Idea",
+      "date": "2026-04-15",
+      "body": "Our pressing system — when to press, who presses, and how the rest of the team shifts to cut passing lanes. Stringers press the ball, everyone else marks individually.",
+      "videos": [
+        "https://youtu.be/EcSkAcHDGmg"
+      ]
+    }
+  ]
+}
