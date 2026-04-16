@@ -1,0 +1,207 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: uploads
+public_folder: uploads
+
+locale: el
+
+collections:
+  # ── Access passwords ─────────────────────────────────────────────────────────
+  - name: access
+    label: "🔐 Access Passwords"
+    files:
+      - name: passwords
+        label: Site Passwords
+        file: content/passwords.json
+        fields:
+          - name: passwords
+            label: Passwords
+            widget: list
+            hint: "One password per row. Anyone with a password on this list can view the site. Changes take effect within 30 seconds of publishing."
+            field:
+              name: password
+              label: Password
+              widget: string
+
+  # ── Ticker messages ──────────────────────────────────────────────────────────
+  - name: ticker
+    label: "🔔 Ticker (top bar)"
+    files:
+      - name: ticker_data
+        label: Ticker Messages
+        file: content/ticker.json
+        fields:
+          - name: messages
+            label: Messages
+            widget: list
+            field:
+              name: message
+              label: Message
+              widget: string
+
+  # ── Standings ────────────────────────────────────────────────────────────────
+  - name: standings
+    label: "🏆 UFA Standings"
+    files:
+      - name: standings_data
+        label: Standings
+        file: content/standings.json
+        fields:
+          - name: teams
+            label: Teams
+            widget: list
+            fields:
+              - {name: team,  label: Team Name, widget: string}
+              - {name: gp,   label: Games Played, widget: number, value_type: int, default: 0}
+              - {name: w,    label: Wins,  widget: number, value_type: int, default: 0}
+              - {name: d,    label: Draws, widget: number, value_type: int, default: 0}
+              - {name: l,    label: Losses, widget: number, value_type: int, default: 0}
+              - {name: gf,   label: Goals For, widget: number, value_type: int, default: 0}
+              - {name: ga,   label: Goals Against, widget: number, value_type: int, default: 0}
+
+  # ── Omada posts ──────────────────────────────────────────────────────────────
+  - name: omada
+    label: "👥 Omada"
+    files:
+      - name: omada_posts
+        label: Omada Posts
+        file: content/omada.json
+        fields:
+          - name: posts
+            label: Posts
+            widget: list
+            fields:
+              - name: id
+                label: ID
+                widget: number
+                value_type: int
+              - name: type
+                label: Post type
+                widget: select
+                options:
+                  - {label: "Pre-match",    value: prematch}
+                  - {label: "Post-match",   value: postmatch}
+                  - {label: "Training plan",value: trainplan}
+              - name: title
+                label: Title
+                widget: string
+                hint: Short title shown in the post header and previews
+              - name: date
+                label: Date
+                widget: datetime
+                format: YYYY-MM-DD
+                date_format: DD MMM YYYY
+                time_format: false
+                required: false
+              - name: body
+                label: Content
+                widget: markdown
+                hint: Write freely — use headings, bullet points, bold text. Insert photos inline with the image button in the toolbar.
+              - name: videos
+                label: Videos
+                widget: list
+                required: false
+                hint: Paste YouTube, Vimeo or Google Drive links — one per row. Videos will be embedded as players in the post.
+                field:
+                  name: url
+                  label: Video URL
+                  widget: string
+
+  # ── Tactics posts ─────────────────────────────────────────────────────────────
+  - name: tactics
+    label: "📋 Tactics"
+    files:
+      - name: tactics_posts
+        label: Tactics Posts
+        file: content/tactics.json
+        fields:
+          - name: posts
+            label: Posts
+            widget: list
+            fields:
+              - name: id
+                label: ID
+                widget: number
+                value_type: int
+              - name: type
+                label: Type
+                widget: select
+                options:
+                  - {label: "Attack",    value: attack}
+                  - {label: "Defense",   value: defense}
+                  - {label: "Set piece", value: setpiece}
+              - name: title
+                label: Title
+                widget: string
+              - name: date
+                label: Date
+                widget: datetime
+                format: YYYY-MM-DD
+                date_format: DD MMM YYYY
+                time_format: false
+                required: false
+              - name: body
+                label: Content
+                widget: markdown
+                hint: Write freely — headings, bullet points, bold text, inline images.
+              - name: videos
+                label: Videos
+                widget: list
+                required: false
+                hint: YouTube, Vimeo or Google Drive links — one per row.
+                field:
+                  name: url
+                  label: Video URL
+                  widget: string
+
+  # ── Training Drills posts ─────────────────────────────────────────────────────
+  - name: drills
+    label: "⚽ Training Drills"
+    files:
+      - name: drills_posts
+        label: Drills Posts
+        file: content/drills.json
+        fields:
+          - name: posts
+            label: Posts
+            widget: list
+            fields:
+              - name: id
+                label: ID
+                widget: number
+                value_type: int
+              - name: type
+                label: Type
+                widget: select
+                options:
+                  - {label: "Ball control", value: ballctrl}
+                  - {label: "Shooting",     value: shooting}
+                  - {label: "Pressing",     value: pressing}
+                  - {label: "Passing",      value: passing}
+                  - {label: "Fitness",      value: fitness}
+                  - {label: "Other",        value: other}
+              - name: title
+                label: Title
+                widget: string
+              - name: date
+                label: Date
+                widget: datetime
+                format: YYYY-MM-DD
+                date_format: DD MMM YYYY
+                time_format: false
+                required: false
+              - name: body
+                label: Content
+                widget: markdown
+                hint: Write freely — headings, bullet points, bold text, inline images.
+              - name: videos
+                label: Videos
+                widget: list
+                required: false
+                hint: YouTube, Vimeo or Google Drive links — one per row.
+                field:
+                  name: url
+                  label: Video URL
+                  widget: string
