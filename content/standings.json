@@ -2,12 +2,12 @@
   "teams": [
     {
       "team": "BECAZZES",
-      "gp": 0,
+      "gp": 2,
       "w": 0,
       "d": 0,
-      "l": 0,
-      "gf": 0,
-      "ga": 0
+      "l": 2,
+      "gf": 2,
+      "ga": 6
     },
     {
       "team": "BEAVERLY",
